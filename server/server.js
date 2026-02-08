@@ -1,4 +1,4 @@
-require('dotenv').config();
+equire('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -6,30 +6,36 @@ const contactRoutes = require('./routes/contact');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-// Default to local MongoDB if no env variable is set
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/portfolio';
+
+// ✅ ONLY use MongoDB Atlas from environment variables
+const MONGODB_URI = process.env.MONGODB_URI;
+
+if (!MONGODB_URI) {
+  console.error('❌ MONGODB_URI not found in environment variables');
+  process.exit(1);
+}
 
 // Middleware
-app.use(cors()); // Allow requests from React frontend
-app.use(express.json()); // Parse JSON bodies
+app.use(cors());
+app.use(express.json());
 
-// Connect to MongoDB
+// Connect to MongoDB Atlas
 mongoose.connect(MONGODB_URI)
-  .then(() => console.log('✅ MongoDB Connected Successfully'))
+  .then(() => console.log('✅ MongoDB Atlas Connected Successfully'))
   .catch(err => {
     console.error('❌ MongoDB Connection Error:', err.message);
-    console.log('   Ensure MongoDB is running locally on port 27017');
+    process.exit(1);
   });
 
-// API Routes
+// Routes
 app.use('/api/contact', contactRoutes);
 
-// Base route for connectivity test
+// Health check route
 app.get('/', (req, res) => {
-  res.send('Portfolio Backend is running. POST to /api/contact to send messages.');
+  res.send('✅ Portfolio Backend is running');
 });
 
-// Start Server
+// Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(⁠ 🚀 Server running on port ${PORT} ⁠);
 });
