@@ -2,29 +2,7 @@ import React, { useState } from 'react';
 import { Mail, Send, MapPin, Database, CheckCircle2, Github } from 'lucide-react';
 
 const Contact: React.FC = () => {
-  const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: ''
-  });
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({ ...prev, [e.target.id]: e.target.value }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormStatus('submitting');
-
-    // Simulate successful submission
-    setTimeout(() => {
-      setFormStatus('success');
-      setFormData({ name: '', email: '', message: '' });
-
-      setTimeout(() => setFormStatus('idle'), 5000);
-    }, 1200);
-  };
+  const [formStatus, setFormStatus] = useState<'idle' | 'success'>('idle');
 
   return (
     <section id="contact" className="py-24 bg-slate-50 relative overflow-hidden">
@@ -51,11 +29,8 @@ const Contact: React.FC = () => {
               </h3>
 
               <div className="space-y-6">
-                <a
-                  href="mailto:25bcae54@kristujayanti.com"
-                  className="flex items-start gap-4 group"
-                >
-                  <div className="p-3 bg-brand-50 text-brand-600 rounded-xl group-hover:bg-brand-500 group-hover:text-white transition">
+                <a href="mailto:25bcae54@kristujayanti.com" className="flex items-start gap-4 group">
+                  <div className="p-3 bg-brand-50 text-brand-600 rounded-xl">
                     <Mail size={24} />
                   </div>
                   <div>
@@ -72,7 +47,7 @@ const Contact: React.FC = () => {
                   rel="noopener noreferrer"
                   className="flex items-start gap-4 group"
                 >
-                  <div className="p-3 bg-slate-100 text-slate-700 rounded-xl group-hover:bg-slate-800 group-hover:text-white transition">
+                  <div className="p-3 bg-slate-100 text-slate-700 rounded-xl">
                     <Github size={24} />
                   </div>
                   <div>
@@ -122,42 +97,40 @@ const Contact: React.FC = () => {
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form
+                action="https://formspree.io/f/xykdyrzg"
+                method="POST"
+                onSubmit={() => setFormStatus('success')}
+                className="space-y-6"
+              >
                 <input
-                  id="name"
+                  name="name"
                   required
-                  value={formData.name}
-                  onChange={handleInputChange}
                   placeholder="Your Name"
                   className="w-full px-4 py-3 rounded-xl border bg-slate-50"
                 />
 
                 <input
-                  id="email"
+                  name="email"
                   type="email"
                   required
-                  value={formData.email}
-                  onChange={handleInputChange}
                   placeholder="your.email@example.com"
                   className="w-full px-4 py-3 rounded-xl border bg-slate-50"
                 />
 
                 <textarea
-                  id="message"
+                  name="message"
                   required
                   rows={4}
-                  value={formData.message}
-                  onChange={handleInputChange}
                   placeholder="Tell me about your project..."
                   className="w-full px-4 py-3 rounded-xl border bg-slate-50 resize-none"
                 />
 
                 <button
                   type="submit"
-                  disabled={formStatus === 'submitting'}
                   className="w-full py-4 rounded-xl font-bold text-white bg-brand-600 hover:bg-brand-700 flex justify-center items-center gap-2"
                 >
-                  {formStatus === 'submitting' ? 'Sending...' : <>Send Message <Send size={18} /></>}
+                  Send Message <Send size={18} />
                 </button>
               </form>
             )}
