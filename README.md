@@ -1,18 +1,37 @@
-# College Portfolio Website
+# Rupak K – Portfolio Website
 
-This is a single-page portfolio website developed as part of a college assignment.
+This is my personal single-page portfolio website created as part of my college assignment.  
+It showcases my profile, skills, education, and includes a working contact form.
 
-## Tech Stack
-- React
-- TypeScript
+## 🔗 Live Website
+https://rupakkportfolio.netlify.app
+
+## 📂 GitHub Repository
+https://github.com/Rupakkk-cloud/rupak-portfolio
+
+## 🛠️ Technologies Used
+
+### Frontend
+- React (TypeScript)
+- Tailwind CSS
 - Vite
-- Node.js (backend)
 
-## Features
-- Modular component-based UI
-- Backend server structure included
-- Responsive design
+### Backend
+- Formspree (Serverless backend for contact form submissions)
 
-## How to Run
-1. Install dependencies
-2. Start frontend and backend servers
+### Hosting
+- Netlify
+
+## 📬 Contact Form
+The contact form is connected to a backend using **Formspree**, which handles form submissions and sends email notifications without requiring a custom server.
+
+## 📌 Project Features
+- Responsive single-page design
+- About, Skills, Education, and Contact sections
+- Working contact form with backend integration
+- Hosted on Netlify
+
+## 👤 Author
+**Rupak K**  
+BCA – General Computer Science  
+Kristu Jayanti University
