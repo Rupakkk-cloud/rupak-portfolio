@@ -1,95 +1,124 @@
 import React, { useState } from 'react';
-import { Mail, Send, MapPin, Database, CheckCircle2, Github } from 'lucide-react';
+import { Mail, Send, MapPin, Database, CheckCircle2, Github, AlertCircle } from 'lucide-react';
+
+const FORMSPREE_URL = "https://formspree.io/f/xykdyrzg";
 
 const Contact: React.FC = () => {
-  const [submitted, setSubmitted] = useState(false);
+  const [formStatus, setFormStatus] =
+    useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData(prev => ({ ...prev, [e.target.id]: e.target.value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormStatus('submitting');
+
+    try {
+      const response = await fetch(FORMSPREE_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (!response.ok) throw new Error("Formspree error");
+
+      setFormStatus('success');
+      setFormData({ name: '', email: '', message: '' });
+
+    } catch (err) {
+      console.error(err);
+      setFormStatus('error');
+    }
+  };
 
   return (
-    <section id="contact" className="py-24 bg-slate-50 relative overflow-hidden">
-      <div className="container mx-auto px-6 relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4">
-            Let's Connect
-          </h2>
-          <p className="text-slate-500 max-w-2xl mx-auto">
-            Ready to start a project or just want to chat? My inbox is always open.
-          </p>
-        </div>
+    <section id="contact" className="py-24 bg-slate-50">
+      <div className="container mx-auto px-6 max-w-5xl">
+        <h2 className="text-3xl font-bold text-center mb-12">Let's Connect</h2>
 
         <div className="grid lg:grid-cols-2 gap-12">
-          {/* Contact Info */}
-          <div className="bg-white p-8 rounded-3xl shadow-xl">
-            <h3 className="text-2xl font-bold mb-6">Contact Information</h3>
 
-            <div className="space-y-5">
-              <a href="mailto:25bcae54@kristujayanti.com" className="flex gap-3">
-                <Mail /> 25bcae54@kristujayanti.com
-              </a>
-
-              <a href="https://github.com/" target="_blank" rel="noreferrer" className="flex gap-3">
-                <Github /> GitHub
-              </a>
-
-              <div className="flex gap-3">
-                <MapPin /> Bengaluru, India
-              </div>
-
-              <div className="flex gap-3">
-                <Database /> Backend: Formspree
-              </div>
+          {/* INFO */}
+          <div className="space-y-6">
+            <a href="mailto:25bcae54@kristujayanti.com" className="flex gap-4">
+              <Mail /> 25bcae54@kristujayanti.com
+            </a>
+            <a href="https://github.com/" target="_blank" className="flex gap-4">
+              <Github /> GitHub
+            </a>
+            <div className="flex gap-4">
+              <MapPin /> Bengaluru, India
+            </div>
+            <div className="flex gap-4">
+              <Database /> Backend: Formspree
             </div>
           </div>
 
-          {/* Contact Form */}
-          <div className="bg-white p-8 rounded-3xl shadow-xl">
-            {submitted ? (
-              <div className="text-center py-12">
-                <CheckCircle2 size={48} className="mx-auto text-green-500 mb-4" />
-                <h3 className="text-xl font-bold">Message sent successfully!</h3>
-                <p className="text-slate-500">I’ll get back to you soon.</p>
+          {/* FORM */}
+          <div className="bg-white p-8 rounded-xl shadow">
+            {formStatus === 'success' ? (
+              <div className="text-center">
+                <CheckCircle2 className="mx-auto text-green-500" size={48} />
+                <h3 className="text-xl font-bold mt-4">Message Sent!</h3>
+                <p>I’ll get back to you soon.</p>
               </div>
             ) : (
-              <form
-                action="https://formspree.io/f/xykdyrzg"
-                method="POST"
-                onSubmit={() => setSubmitted(true)}
-                className="space-y-6"
-              >
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <input
-                  type="text"
-                  name="name"
+                  id="name"
                   required
+                  value={formData.name}
+                  onChange={handleInputChange}
                   placeholder="Your Name"
-                  className="w-full px-4 py-3 rounded-xl border"
+                  className="w-full p-3 border rounded"
                 />
 
                 <input
+                  id="email"
                   type="email"
-                  name="_replyto"
                   required
-                  placeholder="your.email@example.com"
-                  className="w-full px-4 py-3 rounded-xl border"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="Email"
+                  className="w-full p-3 border rounded"
                 />
 
                 <textarea
-                  name="message"
+                  id="message"
                   required
                   rows={4}
-                  placeholder="Tell me about your project..."
-                  className="w-full px-4 py-3 rounded-xl border resize-none"
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  placeholder="Your Message"
+                  className="w-full p-3 border rounded"
                 />
 
-                <input
-                  type="hidden"
-                  name="_subject"
-                  value="New Portfolio Contact Message"
-                />
+                {formStatus === 'error' && (
+                  <div className="text-red-600 flex gap-2 items-center">
+                    <AlertCircle size={18} />
+                    Failed to send. Try again.
+                  </div>
+                )}
 
                 <button
                   type="submit"
-                  className="w-full py-4 bg-brand-600 text-white rounded-xl flex items-center justify-center gap-2"
+                  disabled={formStatus === 'submitting'}
+                  className="w-full bg-brand-600 text-white py-3 rounded"
                 >
-                  Send Message <Send size={18} />
+                  {formStatus === 'submitting' ? "Sending..." : <>Send <Send size={16} /></>}
                 </button>
               </form>
             )}
